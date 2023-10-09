@@ -6,9 +6,25 @@ const ValueSchema = new mongoose.Schema({number: Number});
 
 const Value = mongoose.models.Value || mongoose.model('Value', ValueSchema);
 
+
 export async function GET() {
-    return new Response('This is route.ts from app/api/routeone!');
+  console.log("Called GET function from route.ts. Awaiting dbConnect function...");
+  await dbConnect();
+  console.log("Sucessfully awaited dbConnect function.");
+
+  try {
+      const values = await Value.find({});
+      const numbers = values.map(value => value.number);
+      const ids = values.map(value => value.id)
+      console.log(`Fetched all values: ${numbers}`)
+      console.log(`Fetched all ID's: ${ids}`)
+      return new Response(JSON.stringify(values), {status: 200, headers: {'Content-Type': 'application/json'}});
+  } catch (error) {
+      console.error("API route error:", error);
+      return new Response(JSON.stringify({ success: false }), { status: 400 });
+  }
 }
+
 
 export async function POST(req: Request) {
   console.log("Called POST function from route.ts. Awaiting dbConnect function...");
