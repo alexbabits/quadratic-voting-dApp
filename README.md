@@ -31,14 +31,19 @@ Next.js version 13 vs 12:
 
 ## Plan overview
 
+- User must be connected with a wallet, and wallet must not exist yet in database.
 - `checkAccountVoteEligibility` (to see if an account has already voted, basically sends a get request to the db to see if address already exists/voted)
-- this requires an additional data property 'account' to be passed to backend (besides just number/id/__v).
-- `checkAccountVoteEligibility` is called during the submitVote function first, if account is spotted already within the database, it returns and can't vote submit the vote.
+- `checkAccountVoteEligibility` is called during the `submitVote` function first, if account is spotted already within the database, it returns and can't vote submit the vote.
 - May need a second route for the `checkAccountVoteEligibility` function for a different GET? Since we already have a GET function in routeone?
+- Get `checkAccountVoteEligibility` working first, then finally integrate a smart contract with vote tokens or something.
+
 
 - componentize everything in a component folder or similar afterwards.
 - Will local database work on deployment to vercel?
 - `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
+
+- determine how to make a custom ERC-20 (through manipulating transfer function, or see if you can include a `vote` function.)
+- May need a DAO contract as well to recieve the vote credits, or they can simply get burned when voted.
 
 
 

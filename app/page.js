@@ -6,24 +6,38 @@ export default function Home() {
 
   const [currentValue, setValue] = useState(0);
   const [numbers, setNumbers] = useState([]);
+  const [voters, setVoters] = useState([]);
   const [currentAccount, setCurrentAccount] = useState('');
 
   const onValueChange = event => {setValue(event.target.value)};
 
-  // Submits value to backend for database
+  // Submits votes to backend for database
   const submitVote = async () => {
     try {
+
+      // Check if user has a connected account.
+      if (!currentAccount) {
+        console.error("No account connected. Cannot submit vote!");
+        return;
+      }
+
+      // Check if the currentAccount is already in the list of voters.
+      if (voters.includes(currentAccount)) {
+        console.error("This account has already voted.");
+        return;
+      }
+
       const response = await fetch('/api/routeone', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ number: currentValue })
+        body: JSON.stringify({ number: currentValue, account: currentAccount })
       });
 
       const data = await response.json();
-      console.log(`data.success: ${data.success}. Number saved: ${currentValue}`);
+      console.log(`data.success: ${data.success}. Number saved: ${currentValue}. Voted by: ${currentAccount}`);
 
     } catch (error) {
-      console.log("There was some kind of error: ", error);
+      console.log("There was an error processing the vote: ", error);
     }
   };
 
@@ -105,15 +119,29 @@ export default function Home() {
     }
   };
 
+  // Fetch all voters from our API.
+  const fetchVoters = async () => {
+    try {
+      console.log('Grabbing voters from database');
+      const response = await fetch('/api/routeone');
+      const data = await response.json();
+      setVoters(data.map(item => item.account));
+
+    } catch (error) {
+      console.error("Failed to fetch voters:", error);
+    }
+  };
+
   useEffect(() => {
     checkWalletConnection();
     fetchNumbers();
+    fetchVoters();
   }, []);
 
   return (
     <main className="flex min-h-screen items-center justify-center">
       <div className="space-y-4 font-mono text-center">
-        <h1 className="text-2xl">Hello World</h1>
+        <h1 className="text-2xl">Cast Your Votes</h1>
         <label>Enter a number:</label>
         <input 
           type="number"
@@ -129,9 +157,14 @@ export default function Home() {
         <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         <div className="mt-4">
           <h2>Current Wallet: {currentAccount}</h2>
-          <h2>Stored Numbers:</h2>
+          <h2>Stored Votes:</h2>
           <ul>
             {numbers.map((num, idx) => (
+              <li key={idx}>{num}</li> 
+            ))}
+          </ul>
+          <ul>
+            {voters.map((num, idx) => (
               <li key={idx}>{num}</li> 
             ))}
           </ul>
