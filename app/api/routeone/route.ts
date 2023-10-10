@@ -17,10 +17,10 @@ export async function GET() {
 
   try {
       const values = await Value.find({});
-      const numbers = values.map(value => value.number);
-      const accounts = values.map(value => value.account)
-      console.log(`Fetched all values: ${numbers}`)
-      //console.log(`Fetched all accounts: ${accounts}`)
+      //const numbers = values.map(value => value.number);
+      //const accounts = values.map(value => value.account);
+      //console.log(`Fetched all values: ${numbers}`);
+      //console.log(`Fetched all accounts: ${accounts}`);
       return new Response(JSON.stringify(values), {status: 200, headers: {'Content-Type': 'application/json'}});
   } catch (error) {
       console.error("API route error:", error);

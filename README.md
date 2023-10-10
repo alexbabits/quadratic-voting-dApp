@@ -30,21 +30,18 @@ Next.js version 13 vs 12:
 
 
 ## Plan overview
-
-- User must be connected with a wallet, and wallet must not exist yet in database.
-- `checkAccountVoteEligibility` (to see if an account has already voted, basically sends a get request to the db to see if address already exists/voted)
-- `checkAccountVoteEligibility` is called during the `submitVote` function first, if account is spotted already within the database, it returns and can't vote submit the vote.
-- May need a second route for the `checkAccountVoteEligibility` function for a different GET? Since we already have a GET function in routeone?
-- Get `checkAccountVoteEligibility` working first, then finally integrate a smart contract with vote tokens or something.
-
-
-- componentize everything in a component folder or similar afterwards.
-- Will local database work on deployment to vercel?
-- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
-
+- Instead of submitting one number, submit multiple numbers.
+- Allocate vote credits to the user. They start with 100, and by increasing the vote of each proposal, it increases the number of vote credits that must be spent.
 - determine how to make a custom ERC-20 (through manipulating transfer function, or see if you can include a `vote` function.)
 - May need a DAO contract as well to recieve the vote credits, or they can simply get burned when voted.
 
+
+## Finishing Up
+- Bug: Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
+- Bug: Address also doesn't immediately update when switching addresses.
+- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
+- Will local database work on deployment to vercel?
+- componentize everything in a component folder or similar afterwards.
 
 
 ## References

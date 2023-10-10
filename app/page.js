@@ -11,22 +11,29 @@ export default function Home() {
 
   const onValueChange = event => {setValue(event.target.value)};
 
+  // Checks voter eligibility before proceeding in `submitVote`.
+  const voterEligibilityCheck = () => {
+    // Check if voter has a connected account, and if voter has already voted.
+    if (!currentAccount) {
+        console.error("No MetaMask account connected. Cannot submit vote.");
+        return false;
+    }
+    if (voters.includes(currentAccount)) {
+        console.error("This MetaMask account has already voted.");
+        return false;
+    }
+    return true;
+}
+
   // Submits votes to backend for database
   const submitVote = async () => {
     try {
-
-      // Check if user has a connected account.
-      if (!currentAccount) {
-        console.error("No account connected. Cannot submit vote!");
+      
+      if (!voterEligibilityCheck()) {
         return;
       }
 
-      // Check if the currentAccount is already in the list of voters.
-      if (voters.includes(currentAccount)) {
-        console.error("This account has already voted.");
-        return;
-      }
-
+      // Writes data to API which saves data to database.
       const response = await fetch('/api/routeone', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -81,7 +88,7 @@ export default function Home() {
         // Prompts user to connect their account to dApp, if they do it returns array of their accounts.
         const accounts = await ethereum.request({method: 'eth_requestAccounts'});
         const account = accounts[0];
-        // Setter function updating the state of the current user account to their first.
+        // Setter function updating the state of the current user account to their first account in metamask.
         setCurrentAccount(account);
         console.log(`Account set to: ${account}`);
       }
@@ -106,36 +113,25 @@ export default function Home() {
 		}
 	};
 
-  // Fetch all numbers from our API.
-  const fetchNumbers = async () => {
+  // Fetches voters and their votes from API
+  const fetchData = async () => {
     try {
-      console.log('Grabbing numbers from database');
-      const response = await fetch('/api/routeone');
-      const data = await response.json();
-      setNumbers(data.map(item => item.number));
+        // `fetch` defaults to using GET request.
+        console.log('Grabbing data from database');
+        const response = await fetch('/api/routeone');
+        const data = await response.json();
+        
+        setNumbers(data.map(item => item.number));
+        setVoters(data.map(item => item.account));
 
     } catch (error) {
-      console.error("Failed to fetch numbers:", error);
-    }
-  };
-
-  // Fetch all voters from our API.
-  const fetchVoters = async () => {
-    try {
-      console.log('Grabbing voters from database');
-      const response = await fetch('/api/routeone');
-      const data = await response.json();
-      setVoters(data.map(item => item.account));
-
-    } catch (error) {
-      console.error("Failed to fetch voters:", error);
+        console.error("Failed to fetch data:", error);
     }
   };
 
   useEffect(() => {
     checkWalletConnection();
-    fetchNumbers();
-    fetchVoters();
+    fetchData();
   }, []);
 
   return (
