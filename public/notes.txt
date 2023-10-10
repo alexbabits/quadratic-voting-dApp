@@ -9,32 +9,21 @@ Humans have a bias for certain numbers.
 2. Multiple Users?
 3. Database connection? Mongo/SQL
 4. Express?
-5. Metamask flawless use (grab code from uniswap v2?)
-	- no spam popups
-	- disconnect button, shows current address connected
-	- clean overall
-6. Quadratic voting formula
+5. Quadratic voting formula
 
 https://quadraticvote.co/
 https://github.com/anish-agnihotri/quadratic-voting
 
 https://qv.geek.sg/
 
-Get vitaliks paper on QV
-
-
-vercel is serverless hosting platform
-
 Quadratic voting: 
 https://vitalik.ca/general/2019/12/07/quadratic.html
 
-submit votes button after all votes are cast --> prompts metamask to sign
-login via metamask --> Requires you to hold a token to vote?
-Vote credits --> 100 vote credits over 5 choices
-database holds the users data, and their votes
-
-
-Vue + vercel + MongoDB + Express + Solidity + hardhat + foundry + JS + HTML + CSS tailwind
+ITS NOT N^2, ITS N^2/2. VITALIK HAS IT RIGHT. SHOW THE GRAPHS!
+Each votes `price` changes. You pay one for 1st vote, two credits for 2nd vote, (Totaling 3, and so on.)
+If everyone is given 100 credits, does not mean that each will get the same number of votes.
+Because each vote costs a different amount, some may choose to spread out votes more, giving more total votes.
+Or some may choose to stack votes heavily on one candidate, which will consume more vote credits more quickly.
 
 https://vitalik.ca/general/2019/10/24/gitcoin.html
 https://vitalik.ca/general/2020/01/28/round4.html

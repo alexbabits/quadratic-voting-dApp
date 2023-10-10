@@ -12,9 +12,9 @@ async function dbConnect() {
 
   try {
     // Attempt to connect to database at URI with mongoose.
-    const db = await mongoose.connect('mongodb://127.0.0.1:27017/mydatabase');
+    const db = await mongoose.connect('mongodb://127.0.0.1:27017/voterdatabase');
     connectionState.isConnected = db.connections[0].readyState;
-    console.log("Successfully connected to MongoDB at 'mongodb://127.0.0.1:27017/mydatabase'.");
+    console.log("Successfully connected to MongoDB at 'mongodb://127.0.0.1:27017/voterdatabase'.");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   }

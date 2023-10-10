@@ -2,8 +2,23 @@
 69. Then just link github repo to vercel project on vercel website. It will now auto deploy on any commits.
 69. Try using with Nuxt.js after (vue).
 
+## Plan overview
+- Allocate vote credits to the user. They start with 100.
+- determine how to make a custom ERC-20 (through manipulating transfer function, or see if you can include a `vote` function.)
+- May need a DAO contract as well to recieve the vote credits, or they can simply get burned when voted.
 
-My general thoughts (please critique/improve where you see fit):
+
+
+## Finishing Up
+- Bug: Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
+- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
+- Will local database work on deployment to vercel?
+- componentize everything in a component folder or similar afterwards.
+
+
+
+
+## General Process
 - I ran `npm init -y` to install basic package.json.
 - I ran `npx create-next-app appname` to create most of the starter folders for a Next.js project (`app` folder, `.next` folder)
 - I can now run `npm run dev` which starts a local development server at `http://localhost:3000`. 
@@ -19,6 +34,7 @@ My general thoughts (please critique/improve where you see fit):
 - The frontend sends data using a POST request with submitValue, your Next.js backend picks it up, processes it using the designated API route, and then commits this data to the database.
 
 
+## Notes
 Next.js version 13 vs 12:
 - `pages` --> `app`. API routes are now API route handlers. Must be in `app`, recommended inside `app/api`.
 - Name routes with the folder they are housed in: `app/api/myroutename`. Within `myroutename` the file should always be called `route.ts`.
@@ -27,21 +43,6 @@ Next.js version 13 vs 12:
 - To make a GET request, we would name the function inside `route.ts` GET.
 - The new App Router supports shared layouts, nested routing, loading states, error handling, etc.
 - The components inside `app` default to React Server Components, but can also use/declare them as Client Components. 
-
-
-## Plan overview
-- Instead of submitting one number, submit multiple numbers.
-- Allocate vote credits to the user. They start with 100, and by increasing the vote of each proposal, it increases the number of vote credits that must be spent.
-- determine how to make a custom ERC-20 (through manipulating transfer function, or see if you can include a `vote` function.)
-- May need a DAO contract as well to recieve the vote credits, or they can simply get burned when voted.
-
-
-## Finishing Up
-- Bug: Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
-- Bug: Address also doesn't immediately update when switching addresses.
-- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
-- Will local database work on deployment to vercel?
-- componentize everything in a component folder or similar afterwards.
 
 
 ## References

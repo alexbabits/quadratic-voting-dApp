@@ -4,49 +4,95 @@ import React, { useState, useEffect } from 'react';
 
 export default function Home() {
 
-  const [currentValue, setValue] = useState(0);
-  const [numbers, setNumbers] = useState([]);
-  const [voters, setVoters] = useState([]);
+  // ==========================
+  // STATE VARIABLES & HOOKS
+  // ==========================
+
+  const [votes, setVotes] = useState({ candidateOne: 0, candidateTwo: 0 });
+  const [votingData, setVotingData] = useState([]);
   const [currentAccount, setCurrentAccount] = useState('');
 
-  const onValueChange = event => {setValue(event.target.value)};
+  useEffect(() => {
+    checkWalletConnection();
+    fetchVotingData();
+  }, []);
+
+
+  // ==========================
+  // WEB2 FUNCTIONS
+  // ==========================
+
+  // Updates `votes` state variable when the user inputs a vote for a candidate
+  const handleVoteChange = (candidate, voteCount) => {
+    setVotes(prev => ({ ...prev, [candidate]: voteCount }));
+  };
+
+  // Fetches all data from database through API route handler.
+  const fetchVotingData = async () => {
+    try {
+        console.log('Grabbing voting data from database...');
+        const response = await fetch('/api/routeone');
+        const data = await response.json();
+        setVotingData(data);
+    } catch (error) {
+        console.error("Failed to fetch data:", error);
+    }
+  };
 
   // Checks voter eligibility before proceeding in `submitVote`.
-  const voterEligibilityCheck = () => {
-    // Check if voter has a connected account, and if voter has already voted.
+  const checkVoterEligibility = () => {
+
+    // Check if voter has a connected account.
     if (!currentAccount) {
-        console.error("No MetaMask account connected. Cannot submit vote.");
-        return false;
+      console.error("No MetaMask account connected. Cannot submit vote.");
+      return false;
     }
-    if (voters.includes(currentAccount)) {
-        console.error("This MetaMask account has already voted.");
-        return false;
+
+    // Check if voter has already voted.
+    if (votingData.some(entry => entry.account === currentAccount)) {
+      console.error("This MetaMask account has already voted.");
+      return false;
     }
     return true;
 }
 
-  // Submits votes to backend for database
+  // Sends POST request to backend to save the user's votes in the database.
   const submitVote = async () => {
     try {
       
-      if (!voterEligibilityCheck()) {
-        return;
-      }
+      if (!checkVoterEligibility()) return;
 
-      // Writes data to API which saves data to database.
       const response = await fetch('/api/routeone', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ number: currentValue, account: currentAccount })
+        body: JSON.stringify({ votesArray: Object.values(votes), account: currentAccount })
       });
 
       const data = await response.json();
-      console.log(`data.success: ${data.success}. Number saved: ${currentValue}. Voted by: ${currentAccount}`);
+      console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
 
     } catch (error) {
       console.log("There was an error processing the vote: ", error);
     }
   };
+
+  /*
+  // Check if voter used all 100 credits.
+  if (voteCredits == 0) {
+    console.error("Not all vote credits used. Please use all vote credits before submitting.");
+    return false;
+  }
+  */
+
+  /*
+  const burnVoteCredits = async () => {
+    // Burn vote credits
+  }
+  */
+
+  // ==========================
+  // WEB3 FUNCTIONS
+  // ==========================
 
   // Checks if there is a metamask account connected.
 	const checkWalletConnection = async () => {
@@ -62,7 +108,7 @@ export default function Home() {
 			if (accounts.length > 0) {
 				const account = accounts[0];
         setCurrentAccount(account);
-				console.log(`wallet is connected at: ${account}`);
+				console.log(`MetaMask connection found with: '${account}'`);
 			} else {
 				console.log('No MetaMask account connection found.');
 			}
@@ -90,7 +136,7 @@ export default function Home() {
         const account = accounts[0];
         // Setter function updating the state of the current user account to their first account in metamask.
         setCurrentAccount(account);
-        console.log(`Account set to: ${account}`);
+        console.log(`Account set to: '${account}'`);
       }
 
 		} catch (error) {
@@ -98,13 +144,12 @@ export default function Home() {
 		}
 	};
 
-  // Disconnects wallet (kind of)
+  // Disconnects an account within the dApp. The chain based MetaMask connection persists.
 	const disconnectWallet = () => {
 		try {
-      // Sets address to null within dApp, but doesn't actually cut off Metamask connection. 
       if (currentAccount) {
         setCurrentAccount(null);
-        console.log('Disconnected account:', currentAccount);
+        console.log(`Disconnected account: '${currentAccount}'`);
       } else {
         console.log(`No account to disconnect.`);
       }
@@ -113,55 +158,37 @@ export default function Home() {
 		}
 	};
 
-  // Fetches voters and their votes from API
-  const fetchData = async () => {
-    try {
-        // `fetch` defaults to using GET request.
-        console.log('Grabbing data from database');
-        const response = await fetch('/api/routeone');
-        const data = await response.json();
-        
-        setNumbers(data.map(item => item.number));
-        setVoters(data.map(item => item.account));
-
-    } catch (error) {
-        console.error("Failed to fetch data:", error);
-    }
-  };
-
-  useEffect(() => {
-    checkWalletConnection();
-    fetchData();
-  }, []);
-
   return (
     <main className="flex min-h-screen items-center justify-center">
       <div className="space-y-4 font-mono text-center">
         <h1 className="text-2xl">Cast Your Votes</h1>
-        <label>Enter a number:</label>
-        <input 
-          type="number"
-          step="1"
-          min="0"
-          max="100"
-          value={currentValue}
-          onChange={onValueChange}
-          className="p-2 border rounded mt-2"
-        />
+        {Object.entries(votes).map(([candidate, voteCount], idx) => (
+          <div key={idx}>
+            <label>{`${candidate} `}</label>
+            <input 
+              type="number"
+              step="1"
+              min="0"
+              max="20"
+              value={voteCount}
+              onChange={event => handleVoteChange(candidate, parseInt(event.target.value))}
+              className="p-2 border rounded mt-2"
+            />
+          </div>
+        ))}
         <button onClick={submitVote} className="p-2 mt-2 bg-blue-500 text-white rounded">Submit</button>
         <button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect your wallet</button>
         <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         <div className="mt-4">
-          <h2>Current Wallet: {currentAccount}</h2>
-          <h2>Stored Votes:</h2>
+          <h2>Voting with Wallet: {currentAccount}</h2>
+        </div>
+        <div className="mt-4">
+          <h2>Past Votes</h2>
           <ul>
-            {numbers.map((num, idx) => (
-              <li key={idx}>{num}</li> 
-            ))}
-          </ul>
-          <ul>
-            {voters.map((num, idx) => (
-              <li key={idx}>{num}</li> 
+            {votingData.map((entry, idx) => (
+              <li key={idx}>
+                {`Wallet: '${entry.account}' Votes: ${entry.votesArray.map((vote, i) => `Candidate ${i+1}: ${vote} votes`).join(', ')}`}
+              </li>
             ))}
           </ul>
         </div>
