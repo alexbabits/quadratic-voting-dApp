@@ -1,0 +1,40 @@
+What is 'fair'?
+What illucidates the truth?
+What kind of human psychology is at play when distributing their vote tokens?
+Humans have a bias for certain numbers.
+
+=> voting basic solidity example: https://docs.soliditylang.org/en/latest/solidity-by-example.html
+
+1. Tokens?
+2. Multiple Users?
+3. Database connection? Mongo/SQL
+4. Express?
+5. Metamask flawless use (grab code from uniswap v2?)
+	- no spam popups
+	- disconnect button, shows current address connected
+	- clean overall
+6. Quadratic voting formula
+
+https://quadraticvote.co/
+https://github.com/anish-agnihotri/quadratic-voting
+
+https://qv.geek.sg/
+
+Get vitaliks paper on QV
+
+
+vercel is serverless hosting platform
+
+Quadratic voting: 
+https://vitalik.ca/general/2019/12/07/quadratic.html
+
+submit votes button after all votes are cast --> prompts metamask to sign
+login via metamask --> Requires you to hold a token to vote?
+Vote credits --> 100 vote credits over 5 choices
+database holds the users data, and their votes
+
+
+Vue + vercel + MongoDB + Express + Solidity + hardhat + foundry + JS + HTML + CSS tailwind
+
+https://vitalik.ca/general/2019/10/24/gitcoin.html
+https://vitalik.ca/general/2020/01/28/round4.html

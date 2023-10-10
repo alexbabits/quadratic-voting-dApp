@@ -15,21 +15,30 @@ My general thoughts (please critique/improve where you see fit):
 - `route.ts` is where I create an API endpoint. I define how my server should respond to incoming HTTP requests. The GET and POST functions are examples of how to read and write data to the database.
 - `page.js` inside of `app` is the frontend that has the button and spinbox for a user to input their number. Our `submitValue` function successfully writes the users chosen number via the POST function from `route.ts` to the database.
 - `MNNN` (Mongo, Next.js, Next.js, Node) Next.js API Route handlers substitute for traditional Express backend server. And Next.js also substitutes for React for the frontend.
-
-`route.ts` acts as an intermediary between the frontend page and the database, essentially substituing Express as a backend server for simple projects.
-
-The frontend sends data using a POST request with submitValue, your Next.js backend picks it up, processes it using the designated API route, and then commits this data to the database.
+- `route.ts` acts as an intermediary between the frontend page and the database, essentially substituting Express as a backend server for simple projects.
+- The frontend sends data using a POST request with submitValue, your Next.js backend picks it up, processes it using the designated API route, and then commits this data to the database.
 
 
-Next.js v13 vs v12:
+Next.js version 13 vs 12:
+- `pages` --> `app`. API routes are now API route handlers. Must be in `app`, recommended inside `app/api`.
+- Name routes with the folder they are housed in: `app/api/myroutename`. Within `myroutename` the file should always be called `route.ts`.
+- Going to `http://localhost:3000/api/myroutename` works.
+- `route.ts` now names functions based directly on the HTTP method (GET, POST, PUT, DELETE, etc.).
+- To make a GET request, we would name the function inside `route.ts` GET.
+- The new App Router supports shared layouts, nested routing, loading states, error handling, etc.
+- The components inside `app` default to React Server Components, but can also use/declare them as Client Components. 
 
-"The pages folder has been roughly changed to app folder, and they have changed the way api routes work. The api routes you know from Next.js v12 have been replaced with new api route handlers. These api route handlers are only available within the `app` directory. You are supposed to put them in the `api` folder. And within the `api` folder, each of your routes are named based on the folder. All route files should be called `route.ts` in each of the folders. Now, for each HTTP method inside a `route.ts` we can export a function that has the corresponding name. To make a get request, we would export a function called GET. And for post we do POST. Before, it was done via pages/api location, and you could name your route file whatever you liked. Now it has to be called `route.ts` and whatever specific folder it is in within app/api, that is the 'name' of the route. In version 13, Next.js introduced a new App Router built on React Server Components, which supports shared layouts, nested routing, loading states, error handling, and more. The App Router works in a new directory named app. By default, components inside app are React Server Components. This is a performance optimization and allows you to easily adopt them, and you can also use Client Components."
 
-GET requests are the only ones that can be statically evaluated.
+## Plan overview
 
-So, I have my `app` folder. Inside it, I've mad an api folder. As a test, inside my api folder I have two folders called `routeone` and `routetwo`, both with a `route.ts` inside of them. Here is a working example inside routeone:
+- `checkAccountVoteEligibility` (to see if an account has already voted, basically sends a get request to the db to see if address already exists/voted)
+- this requires an additional data property 'account' to be passed to backend (besides just number/id/__v).
+- `checkAccountVoteEligibility` is called during the submitVote function first, if account is spotted already within the database, it returns and can't vote submit the vote.
+- May need a second route for the `checkAccountVoteEligibility` function for a different GET? Since we already have a GET function in routeone?
 
-When I go to "http://localhost:3000/api/routeone", it succesfully displays the response string! And If I go to routetwo url, that one works as well!
+- componentize everything in a component folder or similar afterwards.
+- Will local database work on deployment to vercel?
+- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
 
 
 

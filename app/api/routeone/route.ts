@@ -17,7 +17,7 @@ export async function GET() {
       const numbers = values.map(value => value.number);
       const ids = values.map(value => value.id)
       console.log(`Fetched all values: ${numbers}`)
-      console.log(`Fetched all ID's: ${ids}`)
+      //console.log(`Fetched all ID's: ${ids}`)
       return new Response(JSON.stringify(values), {status: 200, headers: {'Content-Type': 'application/json'}});
   } catch (error) {
       console.error("API route error:", error);
