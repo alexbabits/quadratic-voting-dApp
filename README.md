@@ -1,23 +1,18 @@
-69. `vercel` deploys on vercel, follow logical prompts.
-69. Then just link github repo to vercel project on vercel website. It will now auto deploy on any commits.
-69. Try using with Nuxt.js after (vue).
-
-## Plan overview
-- Have a check inside `voterEligibilityCheck`? Which is a 3rd check which just says "If user has 200 vote tokens, make sure the sum of the vote tokens being used currently to cast votes does not exceed their 200 token balance."
-
-
-
 ## Finishing Up
-- Bug: In terminal: "Module not found: Can't resolve 'bufferutil' in"...
-- Bug: Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
-- Bug: Annoyed at how I need two useEffects to grab the balance properly.
+- Bug: Auto refresh for vote summary and past votes, and so voter cant vote multiple times. Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
+- Bug: Third useEffect is redundant, see if can combine and functionize the insides. Annoyed at how I need multiple useEffects to grab the balance properly, and to calculate vote summary
 - `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
 - optimize functions, ex: some are reusing the `ethereum` connection check and things like that.
-- componentize everything in a component folder or similar afterwards.
+- Chunk UI code and functions into separate components.
+- Organize UI into the way you want.
+- pop ups for error messages on screen rather than console. pop up for successful vote.
+- Detail the project in the README.
+
 
 ## Questions
-- Will local database work on deployment to vercel?
-
+- Will local database work on deployment to vercel? (Or will I have to use atlas cloud one, is the same but just with a different string?)
+- `vercel` deploys on vercel, follow logical prompts.
+- Then just link github repo to vercel project on vercel website. It will now auto deploy on any commits.
 
 
 
@@ -38,7 +33,7 @@
 - The frontend sends data using a POST request with submitValue, your Next.js backend picks it up, processes it using the designated API route, and then commits this data to the database.
 - ran `npx hardhat init` with baseline javascript project.
 - `npx hardhat run scripts/deploy.js --network sepolia` to deploy `VoteToken`.
-
+- `npm install ws bufferutil utf-8-validate --save-optional` to fix warning bug in terminal for Next.js 13 with ethers.
 
 ## Next.js 12 vs 13 Notes
 - `pages` --> `app`. API routes are now API route handlers. They must be in `app`, recommended inside `app/api`.
@@ -57,3 +52,37 @@
 - Hardhat docs: https://hardhat.org/docs
 - Solidity docs: https://docs.soliditylang.org/en/v0.8.21/
 - Ethers 6 docs: https://docs.ethers.org/v6/
+
+
+
+## Misc notes
+
+What is 'fair'?
+What illucidates the truth?
+What kind of human psychology is at play when distributing their vote tokens?
+Humans have a bias for certain numbers.
+
+=> voting basic solidity example: https://docs.soliditylang.org/en/latest/solidity-by-example.html
+
+1. Tokens?
+2. Multiple Users?
+3. Database connection? Mongo/SQL
+4. Express?
+5. Quadratic voting formula
+
+https://quadraticvote.co/
+https://github.com/anish-agnihotri/quadratic-voting
+
+https://qv.geek.sg/
+
+Quadratic voting: 
+https://vitalik.ca/general/2019/12/07/quadratic.html
+
+ITS NOT N^2, ITS N^2/2. VITALIK HAS IT RIGHT. SHOW THE GRAPHS!
+Each votes `price` changes. You pay one for 1st vote, two credits for 2nd vote, (Totaling 3, and so on.)
+If everyone is given 100 credits, does not mean that each will get the same number of votes.
+Because each vote costs a different amount, some may choose to spread out votes more, giving more total votes.
+Or some may choose to stack votes heavily on one candidate, which will consume more vote credits more quickly.
+
+https://vitalik.ca/general/2019/10/24/gitcoin.html
+https://vitalik.ca/general/2020/01/28/round4.html

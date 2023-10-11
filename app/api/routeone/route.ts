@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   await dbConnect();
 
   try {
-    // parse the body sent from `submitValue`, then grab the votesArray and account that voted.
+    // parse the body sent from `submitBallot`, then grab the votesArray and account that voted.
     const body = await req.json();
     const { votesArray, account } = body;
 

@@ -25,5 +25,10 @@
     "postcss": "^8",
     "tailwindcss": "^3",
     "typescript": "5.2.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.14.2"
   }
 }
