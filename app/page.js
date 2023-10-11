@@ -15,7 +15,7 @@ export default function Home() {
   const [votes, setVotes] = useState({ candidateOne: 0, candidateTwo: 0 });
   const [votingData, setVotingData] = useState([]);
   const [currentAccount, setCurrentAccount] = useState('');
-  const [currentVoteTokens, setCurrentVoteTokens] = useState(0); 
+  const [voteTokensHeld, setVoteTokensHeld] = useState(0); 
 
   useEffect(() => {
     checkWalletConnection();
@@ -64,13 +64,12 @@ export default function Home() {
       return false;
     }
 
-    /*
-    // Check if sum of Vote Tokens used is less than or equal to their Vote Tokens in account 
-    if (stuff) {
-      console.error("Not enough Vote Tokens in accoutn for that sum.");
+    // LOGIC INCORRECT, DOES NOT YET INCORPORATE SUM OF TOKENS CURRENTLY VOTING WITH TO CHECK AGAINST
+    if (voteTokensHeld >= 0) {
+      console.error("Not enough Vote Tokens in account for that sum.");
       return false;
     }
-    */
+
     return true;
 }
 
@@ -157,7 +156,7 @@ export default function Home() {
 		try {
       if (currentAccount) {
         setCurrentAccount(null);
-        setCurrentVoteTokens(0);
+        setVoteTokensHeld(0);
         console.log(`Disconnected account: '${currentAccount}'`);
       } else {
         console.log(`No account to disconnect.`);
@@ -185,7 +184,7 @@ export default function Home() {
       // Call `balanceOf` to fetch currently connected acconut's balance.
       const balance = await contract.balanceOf(currentAccount);
       const readableBalance = ethers.formatUnits(balance);
-      setCurrentVoteTokens(readableBalance);
+      setVoteTokensHeld(readableBalance);
       console.log(`Balance of account '${currentAccount}': ${readableBalance} VTKN`);
       } else {
         console.log('No MetaMask account connection found.');
@@ -218,7 +217,7 @@ export default function Home() {
         <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         <div className="mt-4">
           <h2>Voting with Wallet: {currentAccount}</h2>
-          <h2>VTKN Balance: {currentVoteTokens}</h2>
+          <h2>VTKN Balance: {voteTokensHeld}</h2>
         </div>
         <div className="mt-4">
           <h2>Past Votes</h2>
