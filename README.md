@@ -3,17 +3,21 @@
 69. Try using with Nuxt.js after (vue).
 
 ## Plan overview
-- Allocate vote credits to the user. They start with 100.
-- determine how to make a custom ERC-20 (through manipulating transfer function, or see if you can include a `vote` function.)
-- May need a DAO contract as well to recieve the vote credits, or they can simply get burned when voted.
+- Have a check inside `voterEligibilityCheck`? Which is a 3rd check which just says "If user has 200 vote tokens, make sure the sum of the vote tokens being used currently to cast votes does not exceed their 200 token balance."
 
 
 
 ## Finishing Up
+- Bug: In terminal: "Module not found: Can't resolve 'bufferutil' in"...
 - Bug: Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
+- Bug: Annoyed at how I need two useEffects to grab the balance properly.
 - `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
-- Will local database work on deployment to vercel?
+- optimize functions, ex: some are reusing the `ethereum` connection check and things like that.
 - componentize everything in a component folder or similar afterwards.
+
+## Questions
+- Will local database work on deployment to vercel?
+
 
 
 
@@ -32,15 +36,15 @@
 - `MNNN` (Mongo, Next.js, Next.js, Node) Next.js API Route handlers substitute for traditional Express backend server. And Next.js also substitutes for React for the frontend.
 - `route.ts` acts as an intermediary between the frontend page and the database, essentially substituting Express as a backend server for simple projects.
 - The frontend sends data using a POST request with submitValue, your Next.js backend picks it up, processes it using the designated API route, and then commits this data to the database.
+- ran `npx hardhat init` with baseline javascript project.
+- `npx hardhat run scripts/deploy.js --network sepolia` to deploy `VoteToken`.
 
 
-## Notes
-Next.js version 13 vs 12:
-- `pages` --> `app`. API routes are now API route handlers. Must be in `app`, recommended inside `app/api`.
-- Name routes with the folder they are housed in: `app/api/myroutename`. Within `myroutename` the file should always be called `route.ts`.
-- Going to `http://localhost:3000/api/myroutename` works.
+## Next.js 12 vs 13 Notes
+- `pages` --> `app`. API routes are now API route handlers. They must be in `app`, recommended inside `app/api`.
+- Name routes with the folder they are housed in: `app/api/myroutename`. The route within `myroutename` should always be called `route.ts`.
 - `route.ts` now names functions based directly on the HTTP method (GET, POST, PUT, DELETE, etc.).
-- To make a GET request, we would name the function inside `route.ts` GET.
+- To make a GET request, we would name a function `GET` inside `route.ts`.
 - The new App Router supports shared layouts, nested routing, loading states, error handling, etc.
 - The components inside `app` default to React Server Components, but can also use/declare them as Client Components. 
 

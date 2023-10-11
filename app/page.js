@@ -1,22 +1,32 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import VoteTokenABI from "../artifacts/contracts/VoteToken.sol/VoteToken.json";
+import { ethers } from 'ethers';
 
 export default function Home() {
 
   // ==========================
   // STATE VARIABLES & HOOKS
   // ==========================
+  const addressVoteToken = '0xcb76a79aE432a579c80be9674ce1Ab4a5A5E6f0D'
+  const abiVoteToken = VoteTokenABI.abi
 
   const [votes, setVotes] = useState({ candidateOne: 0, candidateTwo: 0 });
   const [votingData, setVotingData] = useState([]);
   const [currentAccount, setCurrentAccount] = useState('');
+  const [currentVoteTokens, setCurrentVoteTokens] = useState(0); 
 
   useEffect(() => {
     checkWalletConnection();
     fetchVotingData();
   }, []);
 
+  useEffect(() => {
+      if (currentAccount) {
+          fetchVoteTokenAmount();
+      }
+  }, [currentAccount]);
 
   // ==========================
   // WEB2 FUNCTIONS
@@ -53,6 +63,14 @@ export default function Home() {
       console.error("This MetaMask account has already voted.");
       return false;
     }
+
+    /*
+    // Check if sum of Vote Tokens used is less than or equal to their Vote Tokens in account 
+    if (stuff) {
+      console.error("Not enough Vote Tokens in accoutn for that sum.");
+      return false;
+    }
+    */
     return true;
 }
 
@@ -76,19 +94,6 @@ export default function Home() {
     }
   };
 
-  /*
-  // Check if voter used all 100 credits.
-  if (voteCredits == 0) {
-    console.error("Not all vote credits used. Please use all vote credits before submitting.");
-    return false;
-  }
-  */
-
-  /*
-  const burnVoteCredits = async () => {
-    // Burn vote credits
-  }
-  */
 
   // ==========================
   // WEB3 FUNCTIONS
@@ -97,14 +102,16 @@ export default function Home() {
   // Checks if there is a metamask account connected.
 	const checkWalletConnection = async () => {
 		try {
-
+      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
 			const { ethereum } = window;
       if (!ethereum) {
 				console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
         return;
 			}
+
 			const accounts = await ethereum.request({ method: 'eth_accounts'});
 
+      // If an account is found in accounts, set it as currentAccount.
 			if (accounts.length > 0) {
 				const account = accounts[0];
         setCurrentAccount(account);
@@ -120,13 +127,14 @@ export default function Home() {
   // Connects metamask wallet to dApp.
 	const connectWallet = async () => {
 		try {
-
+      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
 			const { ethereum } = window;
       if (!ethereum) {
 				console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
         return;
 			}
 
+      // If an account is currently connected...
       if (currentAccount) {
         console.log(`Account already connected: ${currentAccount}.\nTo change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`);
         return;
@@ -149,6 +157,7 @@ export default function Home() {
 		try {
       if (currentAccount) {
         setCurrentAccount(null);
+        setCurrentVoteTokens(0);
         console.log(`Disconnected account: '${currentAccount}'`);
       } else {
         console.log(`No account to disconnect.`);
@@ -157,6 +166,34 @@ export default function Home() {
 			console.log(error);
 		}
 	};
+
+  // Fetches the amount of vote tokens held by an account.
+  const fetchVoteTokenAmount = async () => {
+    try {
+      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
+        return;
+      }
+
+      // If an account is currently connected...
+      if (currentAccount) {
+      const provider = new ethers.BrowserProvider(ethereum, 'any');
+      const contract = new ethers.Contract(addressVoteToken, abiVoteToken, provider);
+      
+      // Call `balanceOf` to fetch currently connected acconut's balance.
+      const balance = await contract.balanceOf(currentAccount);
+      const readableBalance = ethers.formatUnits(balance);
+      setCurrentVoteTokens(readableBalance);
+      console.log(`Balance of account '${currentAccount}': ${readableBalance} VTKN`);
+      } else {
+        console.log('No MetaMask account connection found.');
+      }
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center">
@@ -181,6 +218,7 @@ export default function Home() {
         <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         <div className="mt-4">
           <h2>Voting with Wallet: {currentAccount}</h2>
+          <h2>VTKN Balance: {currentVoteTokens}</h2>
         </div>
         <div className="mt-4">
           <h2>Past Votes</h2>
