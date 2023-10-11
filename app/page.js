@@ -22,18 +22,8 @@ export default function Home() {
   const [currentAccount, setCurrentAccount] = useState('');
 
   useEffect(() => {
-    const tempVoteSums = { ...initialCandidatesState };
-
-    votingData.forEach(entry => {
-      entry.votesArray.forEach((vote, i) => {
-        const candidateKey = `candidate${i + 1}`;
-        tempVoteSums[candidateKey] += vote;
-      });
-    });
-
-    setVoteSums(tempVoteSums);
+    updateVoteSums();
   }, [votingData]);
-
 
   useEffect(() => {
     checkWalletConnection();
@@ -80,9 +70,23 @@ export default function Home() {
         const response = await fetch('/api/routeone');
         const data = await response.json();
         setVotingData(data);
+        console.log('Successfully fetched and set voting data.')
     } catch (error) {
         console.error("Failed to fetch data:", error);
     }
+  };
+
+  // Calculates vote totals for each candidate.
+  const updateVoteSums = () => {
+    const tempVoteSums = { ...initialCandidatesState };
+
+    votingData.forEach(entry => {
+      entry.votesArray.forEach((vote, i) => {
+        const candidateKey = `candidate${i + 1}`;
+        tempVoteSums[candidateKey] += vote;
+      });
+    });
+    setVoteSums(tempVoteSums);
   };
 
   // Checks voter eligibility before proceeding in `submitBallot`.
@@ -112,18 +116,21 @@ export default function Home() {
   // Sends POST request to backend to save the user's votes in the database.
   const submitBallot = async () => {
     try {
-      
+
+      // Makes sure user is eligible to vote.
       if (!checkVoterEligibility()) return;
 
+      // Sends POST request to api route for database
       const response = await fetch('/api/routeone', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ votesArray: Object.values(votes), account: currentAccount })
       });
 
+      // awaits the response recieved, calls `fetchVotingData` to immediately update page with the db vote data.
       const data = await response.json();
       console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
-
+      fetchVotingData();
     } catch (error) {
       console.log("There was an error processing the vote: ", error);
     }
@@ -235,7 +242,7 @@ export default function Home() {
     <main className="flex min-h-screen items-center justify-center">
       <div className="space-y-4 font-mono text-center">
         <h1 className="text-2xl">Cast Your (Quadratic) Votes</h1>
-        <h2>Total VTKN Required: {totalVoteTokensRequired}</h2>
+        <h2>Voting with Wallet: {currentAccount}</h2>
         {Object.entries(votes).map(([candidate, voteCount], idx) => (
           <div key={idx}>
             <label>{`${candidate} `}</label>
@@ -251,12 +258,13 @@ export default function Home() {
             <span className="ml-4">{`VTKN Required: ${voteTokensRequired[candidate]}`}</span>
           </div>
         ))}
-        <button onClick={submitBallot} className="p-2 mt-2 bg-blue-500 text-white rounded">Submit Ballot</button>
-        <button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect your wallet</button>
+        <h2>Total VTKN Required: {totalVoteTokensRequired}</h2>
+        <h2>VTKN Balance: {voteTokensHeld}</h2>
+        <div><button onClick={submitBallot} className="p-2 mt-2 bg-blue-500 text-white rounded">Submit Ballot</button></div>
+        <div><button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect Wallet</button>
         <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
+        </div>
         <div className="mt-4">
-          <h2>Voting with Wallet: {currentAccount}</h2>
-          <h2>VTKN Balance: {voteTokensHeld}</h2>
         </div>
         <div className="mt-4">
           <h2>Past Votes:</h2>

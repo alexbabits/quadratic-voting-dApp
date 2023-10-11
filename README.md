@@ -1,12 +1,33 @@
 ## Finishing Up
-- Bug: Auto refresh for vote summary and past votes, and so voter cant vote multiple times. Voter can vote multiple times still until page refreshes. Needs to immediately refresh somehow.
-- Bug: Third useEffect is redundant, see if can combine and functionize the insides. Annoyed at how I need multiple useEffects to grab the balance properly, and to calculate vote summary
-- `useReducer` to batch multiple state updates in one go. When you are updating multiple state variables consecutively and you are sure they are always updated together. `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
-- optimize functions, ex: some are reusing the `ethereum` connection check and things like that.
-- Chunk UI code and functions into separate components.
-- Organize UI into the way you want.
-- pop ups for error messages on screen rather than console. pop up for successful vote.
+- Give GPT context:
+    - route.ts & beginning of pages
+    - rest of pages.
+
+- Express current internal/backend concerns
+    - Multiple useEffect
+        - `useReducer` to batch multiple state updates in one go. (updating multiple state variables consecutively and you are sure they are always updated together.)
+        - `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
+    - calculating sum of votes inefficiently and in a roundabout manner.
+    - optimize functions, ex: some are reusing the `ethereum` connection check and things like that.
+
+- UI Concerns
+    - Connect Wallet/Disconnect button should be a single button, which switches to the other one when clicked basically.
+    - Move everything visually to how you want
+    - Break everything into component files
+    - Coloring/Background/Aesthetics
+    - candidate1 into Candidate 1.
+    - Connect Wallet/Disconnect button in top right
+    - Past Votes in a nice box format on left or right.
+    - Vote Summary in a box somewhere nice.
+    - pop ups for error messages on screen rather than console. pop up for successful vote.
+
 - Detail the project in the README.
+
+
+
+
+
+
 
 
 ## Questions
@@ -34,6 +55,8 @@
 - ran `npx hardhat init` with baseline javascript project.
 - `npx hardhat run scripts/deploy.js --network sepolia` to deploy `VoteToken`.
 - `npm install ws bufferutil utf-8-validate --save-optional` to fix warning bug in terminal for Next.js 13 with ethers.
+- `VTKN` contract address: `0xcb76a79aE432a579c80be9674ce1Ab4a5A5E6f0D`
+
 
 ## Next.js 12 vs 13 Notes
 - `pages` --> `app`. API routes are now API route handlers. They must be in `app`, recommended inside `app/api`.
