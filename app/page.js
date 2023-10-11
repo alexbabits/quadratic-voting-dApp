@@ -78,15 +78,16 @@ export default function Home() {
 
   // Calculates vote totals for each candidate.
   const updateVoteSums = () => {
-    const tempVoteSums = { ...initialCandidatesState };
+    const candidateVotes = { ...initialCandidatesState };
 
     votingData.forEach(entry => {
       entry.votesArray.forEach((vote, i) => {
+        // key based on `initialCandidatesState` naming convention.
         const candidateKey = `candidate${i + 1}`;
-        tempVoteSums[candidateKey] += vote;
+        candidateVotes[candidateKey] += vote;
       });
     });
-    setVoteSums(tempVoteSums);
+    setVoteSums(candidateVotes);
   };
 
   // Checks voter eligibility before proceeding in `submitBallot`.
@@ -127,7 +128,7 @@ export default function Home() {
         body: JSON.stringify({ votesArray: Object.values(votes), account: currentAccount })
       });
 
-      // awaits the response recieved, calls `fetchVotingData` to immediately update page with the db vote data.
+      // Logs the response data. Calls `fetchVotingData` to immediately update page with the db vote data. 
       const data = await response.json();
       console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
       fetchVotingData();
@@ -141,16 +142,22 @@ export default function Home() {
   // WEB3 FUNCTIONS
   // ==========================
 
+  // Helper function to get MetaMask Object.
+  const getEthereumObject = () => {
+    // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
+    const { ethereum } = window;
+    if (!ethereum) {
+      console.log('MetaMask not detected. Please install MetaMask to login with Web3.');
+      return null;
+    }
+    return ethereum;
+  };
+
   // Checks if there is a metamask account connected.
 	const checkWalletConnection = async () => {
 		try {
-      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
-			const { ethereum } = window;
-      if (!ethereum) {
-				console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
-        return;
-			}
-
+      const ethereum = getEthereumObject();
+      if (!ethereum) return;
 			const accounts = await ethereum.request({ method: 'eth_accounts'});
 
       // If an account is found in accounts, set it as currentAccount.
@@ -169,12 +176,8 @@ export default function Home() {
   // Connects metamask wallet to dApp.
 	const connectWallet = async () => {
 		try {
-      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
-			const { ethereum } = window;
-      if (!ethereum) {
-				console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
-        return;
-			}
+      const ethereum = getEthereumObject();
+      if (!ethereum) return;
 
       // If an account is currently connected...
       if (currentAccount) {
@@ -212,12 +215,8 @@ export default function Home() {
   // Fetches the amount of vote tokens held by an account.
   const fetchVoteTokensHeld = async () => {
     try {
-      // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
-      const { ethereum } = window;
-      if (!ethereum) {
-        console.log('MetaMask not deteceted. Please install MetaMask to login with Web3.');
-        return;
-      }
+      const ethereum = getEthereumObject();
+      if (!ethereum) return;
 
       // If an account is currently connected...
       if (currentAccount) {
@@ -245,7 +244,7 @@ export default function Home() {
         <h2>Voting with Wallet: {currentAccount}</h2>
         {Object.entries(votes).map(([candidate, voteCount], idx) => (
           <div key={idx}>
-            <label>{`${candidate} `}</label>
+            <label>{`Candidate ${(idx+1)} `}</label>
             <input 
               type="number"
               step="1"
@@ -261,13 +260,12 @@ export default function Home() {
         <h2>Total VTKN Required: {totalVoteTokensRequired}</h2>
         <h2>VTKN Balance: {voteTokensHeld}</h2>
         <div><button onClick={submitBallot} className="p-2 mt-2 bg-blue-500 text-white rounded">Submit Ballot</button></div>
-        <div><button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect Wallet</button>
-        <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
+        <div>
+          <button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect Wallet</button>
+          <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         </div>
         <div className="mt-4">
-        </div>
-        <div className="mt-4">
-          <h2>Past Votes:</h2>
+          <h2>Past Voters:</h2>
           <ul>
             {votingData.map((entry, idx) => (
               <li key={idx}>
@@ -277,13 +275,16 @@ export default function Home() {
           </ul>
         </div>
         <div className="mt-4">
-          <h2>Vote Summary:</h2>
+          <h2>Current Standings:</h2>
           <ul>
-            {Object.entries(voteSums).map(([candidate, votes]) => (
+          {Object.entries(voteSums).map(([candidate, votes]) => {
+            const formattedCandidate = candidate.replace(/(\d+)/g, ' $1');
+            return (
               <li key={candidate}>
-                {`${candidate.charAt(0).toUpperCase() + candidate.slice(1)}: ${votes} votes`}
+                {`${formattedCandidate.charAt(0).toUpperCase() + formattedCandidate.slice(1)}: ${votes} votes`}
               </li>
-            ))}
+            );
+          })}
           </ul>
           <p>Number of Unique Voters: {votingData.length}</p>
         </div>

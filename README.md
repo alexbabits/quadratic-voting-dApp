@@ -1,31 +1,18 @@
 ## Finishing Up
-- Give GPT context:
-    - route.ts & beginning of pages
-    - rest of pages.
-
-- Express current internal/backend concerns
-    - Multiple useEffect
-        - `useReducer` to batch multiple state updates in one go. (updating multiple state variables consecutively and you are sure they are always updated together.)
-        - `React.memo` also helps, higher order component that memorizes the rendered output of the wrapped component preventing unecessary renders.
-    - calculating sum of votes inefficiently and in a roundabout manner.
-    - optimize functions, ex: some are reusing the `ethereum` connection check and things like that.
-
 - UI Concerns
-    - Connect Wallet/Disconnect button should be a single button, which switches to the other one when clicked basically.
-    - Move everything visually to how you want
-    - Break everything into component files
-    - Coloring/Background/Aesthetics
-    - candidate1 into Candidate 1.
-    - Connect Wallet/Disconnect button in top right
-    - Past Votes in a nice box format on left or right.
-    - Vote Summary in a box somewhere nice.
     - pop ups for error messages on screen rather than console. pop up for successful vote.
+    - Move everything visually to how you want
+        - Connect Wallet & Disconnect button in top right
+        - Past Voters in a nice box format on left or right.
+        - Vote Summary in a box somewhere nice.
+    - Coloring/Background/Aesthetics
+    - Break everything into component files
 
 - Detail the project in the README.
 
+toast.error, toast.success, toast.info
 
-
-
+Right now, everything is in one big div I think, just centered and top to bottom.
 
 
 
@@ -109,3 +96,37 @@ Or some may choose to stack votes heavily on one candidate, which will consume m
 
 https://vitalik.ca/general/2019/10/24/gitcoin.html
 https://vitalik.ca/general/2020/01/28/round4.html
+
+
+
+
+atlas:
+
+adminUser, NMinaNidGa4rXe4S
+
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://adminUser:<password>@cluster0.wfzut53.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
