@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import VoteTokenABI from "../artifacts/contracts/VoteToken.sol/VoteToken.json";
 import { ethers } from 'ethers';
+import Toastify  from 'toastify-js'
+import "toastify-js/src/toastify.css"
 
 export default function Home() {
 
@@ -95,19 +97,25 @@ export default function Home() {
 
     // Check if voter has a connected account.
     if (!currentAccount) {
-      console.error("No MetaMask account connected. Cannot submit vote.");
+      const message = "No MetaMask account connected. Cannot submit vote."
+      console.error(message);
+      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       return false;
     }
 
     // Check if voter has already voted.
     if (votingData.some(entry => entry.account === currentAccount)) {
-      console.error("This MetaMask account has already voted.");
+      const message = "This MetaMask account has already voted."
+      console.error(message);
+      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       return false;
     }
 
     // Check if voter has sufficient vote tokens to cast ballot.
     if (voteTokensHeld < totalVoteTokensRequired) {
-      console.error(`You have ${voteTokensHeld} VTKN but are trying to submit a ballot using ${totalVoteTokensRequired}.`);
+      const message = `You have ${voteTokensHeld} VTKN but are trying to submit a ballot using ${totalVoteTokensRequired}.`
+      console.error(message);
+      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       return false;
     }
 
@@ -132,8 +140,10 @@ export default function Home() {
       const data = await response.json();
       console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
       fetchVotingData();
+      Toastify({text: 'Vote Success!', duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "green"}}).showToast();
     } catch (error) {
-      console.log("There was an error processing the vote: ", error);
+      console.error("There was an error processing the vote: ", error);
+      Toastify({text: 'Vote Failed.', duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
     }
   };
 
@@ -147,7 +157,9 @@ export default function Home() {
     // Attempt to define `ethereum` property (MetaMask) in the context of browser `window` object.
     const { ethereum } = window;
     if (!ethereum) {
-      console.log('MetaMask not detected. Please install MetaMask to login with Web3.');
+      const message = 'MetaMask not detected. Please install MetaMask to login with Web3.'
+      console.log(message);
+      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       return null;
     }
     return ethereum;
@@ -181,7 +193,9 @@ export default function Home() {
 
       // If an account is currently connected...
       if (currentAccount) {
-        console.log(`Account already connected: ${currentAccount}.\nTo change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`);
+        const message = `Account '${currentAccount}' already connected.  To change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`
+        console.log(message);
+        Toastify({text: message, duration: 5000, close: true, gravity: 'top', position: 'right', style: {background: "blue"}}).showToast();
         return;
       } else {
         // Prompts user to connect their account to dApp, if they do it returns array of their accounts.
@@ -189,11 +203,14 @@ export default function Home() {
         const account = accounts[0];
         // Setter function updating the state of the current user account to their first account in metamask.
         setCurrentAccount(account);
-        console.log(`Account set to: '${account}'`);
+        const message = `Account set to: '${account}'`
+        console.log(message);
+        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "green"}}).showToast();
       }
 
 		} catch (error) {
 			console.log(error);
+      Toastify({text: error, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
 		}
 	};
 
@@ -203,9 +220,13 @@ export default function Home() {
       if (currentAccount) {
         setCurrentAccount(null);
         setVoteTokensHeld(0);
-        console.log(`Disconnected account: '${currentAccount}'`);
+        const message = `Disconnected '${currentAccount}'`
+        console.log(message);
+        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       } else {
-        console.log(`No account to disconnect.`);
+        const message = "No account to disconnect."
+        console.log(message);
+        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
       }
 		} catch (error) {
 			console.log(error);

@@ -1,6 +1,5 @@
 ## Finishing Up
 - UI Concerns
-    - pop ups for error messages on screen rather than console. pop up for successful vote.
     - Move everything visually to how you want
         - Connect Wallet & Disconnect button in top right
         - Past Voters in a nice box format on left or right.
@@ -10,10 +9,8 @@
 
 - Detail the project in the README.
 
-toast.error, toast.success, toast.info
 
 Right now, everything is in one big div I think, just centered and top to bottom.
-
 
 
 
@@ -43,7 +40,7 @@ Right now, everything is in one big div I think, just centered and top to bottom
 - `npx hardhat run scripts/deploy.js --network sepolia` to deploy `VoteToken`.
 - `npm install ws bufferutil utf-8-validate --save-optional` to fix warning bug in terminal for Next.js 13 with ethers.
 - `VTKN` contract address: `0xcb76a79aE432a579c80be9674ce1Ab4a5A5E6f0D`
-
+- popups: `npm install --save toastify-js`
 
 ## Next.js 12 vs 13 Notes
 - `pages` --> `app`. API routes are now API route handlers. They must be in `app`, recommended inside `app/api`.
