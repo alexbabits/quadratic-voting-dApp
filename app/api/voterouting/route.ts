@@ -7,7 +7,7 @@ const VotingData = mongoose.models.VotingData || mongoose.model('VotingData', Vo
 
 // GET function to fetch and read the data from the database.
 export async function GET() {
-  console.log("Calling GET function from 'api/routeone/route.ts'. Awaiting database connection...");
+  console.log("Calling GET function from 'api/voterouting/route.ts'. Awaiting database connection...");
   await dbConnect();
 
   try {
@@ -22,7 +22,7 @@ export async function GET() {
 
 // POST function to write data to the database.
 export async function POST(req: Request) {
-  console.log("Calling POST function from 'api/routeone/route.ts'. Awaiting database connection...");
+  console.log("Calling POST function from 'api/voterouting/route.ts'. Awaiting database connection...");
   await dbConnect();
 
   try {

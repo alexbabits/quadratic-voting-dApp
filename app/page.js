@@ -24,13 +24,13 @@ export default function Home() {
   const [currentAccount, setCurrentAccount] = useState('');
 
   useEffect(() => {
-    updateVoteSums();
-  }, [votingData]);
-
-  useEffect(() => {
     checkWalletConnection();
     fetchVotingData();
   }, []);
+
+  useEffect(() => {
+    updateVoteSums();
+  }, [votingData]);
 
   useEffect(() => {
       if (currentAccount) {
@@ -83,7 +83,7 @@ export default function Home() {
   const fetchVotingData = async () => {
     try {
         console.log('Grabbing voting data from database...');
-        const response = await fetch('/api/routeone');
+        const response = await fetch('/api/voterouting');
         const data = await response.json();
         setVotingData(data);
         console.log('Successfully fetched and set voting data.')
@@ -135,7 +135,7 @@ export default function Home() {
     return true;
 }
 
-  // Sends POST request to backend to save the user's votes in the database.
+  // Sends POST request to backend to save the user's ballot in the database.
   const submitBallot = async () => {
     try {
 
@@ -143,7 +143,7 @@ export default function Home() {
       if (!checkVoterEligibility()) return;
 
       // Sends POST request to api route for database
-      const response = await fetch('/api/routeone', {
+      const response = await fetch('/api/voterouting', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ votesArray: Object.values(votes), account: currentAccount })
@@ -153,10 +153,10 @@ export default function Home() {
       const data = await response.json();
       console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
       fetchVotingData();
-      showToast("Vote Success!", 2000, "green");
+      showToast("Ballot successfully submitted!", 2000, "green");
     } catch (error) {
       console.error("There was an error processing the vote: ", error);
-      showToast("Vote Failed.", 2000, "red");
+      showToast("Failed to submit ballot.", 2000, "red");
     }
   };
 
@@ -206,7 +206,7 @@ export default function Home() {
 
       // If an account is currently connected...
       if (currentAccount) {
-        const message = `Account '${currentAccount}' already connected.  To change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`
+        const message = `Account '${currentAccount}' already connected. To change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`
         console.log(message);
         showToast(message, 5000, "blue");
         return;

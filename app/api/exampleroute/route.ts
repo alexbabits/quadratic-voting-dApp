@@ -1,4 +1,5 @@
-// Exmaple of another route
+// Example a route using Next.js ^13.2.
+// (NOT USED IN PROJECT!!!!)
 
 export async function GET() {
     return new Response('This is route.ts from app/api/routetwo!')
