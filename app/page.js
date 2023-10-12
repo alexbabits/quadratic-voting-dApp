@@ -38,9 +38,23 @@ export default function Home() {
       }
   }, [currentAccount]);
 
+
   // ==========================
-  // WEB2 FUNCTIONS
+  // Web2 FUNCTIONS 
   // ==========================
+
+  // Helper function for Toastify pop-ups
+  function showToast(message, duration, color) {
+    Toastify({text: message, duration: duration, close: true, gravity: 'top', position: 'left', style: {background: color}}).showToast();
+  }
+
+  // Helper function to format displayed 0x addresses.
+  function truncateAddress(address) {
+    if (!address) return "";
+    const prefix = address.slice(0, 6);
+    const suffix = address.slice(-4);
+    return `${prefix}...${suffix}`;
+  }
 
   // Helper function to calculate total Vote Tokens needed for n votes cast on a candidate.
   const quadraticVotingCost = n => (n * (n + 1)) / 2;
@@ -99,7 +113,7 @@ export default function Home() {
     if (!currentAccount) {
       const message = "No MetaMask account connected. Cannot submit vote."
       console.error(message);
-      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast(message, 2000, "red");
       return false;
     }
 
@@ -107,7 +121,7 @@ export default function Home() {
     if (votingData.some(entry => entry.account === currentAccount)) {
       const message = "This MetaMask account has already voted."
       console.error(message);
-      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast(message, 2000, "red");
       return false;
     }
 
@@ -115,10 +129,9 @@ export default function Home() {
     if (voteTokensHeld < totalVoteTokensRequired) {
       const message = `You have ${voteTokensHeld} VTKN but are trying to submit a ballot using ${totalVoteTokensRequired}.`
       console.error(message);
-      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast(message, 2000, "red");
       return false;
     }
-
     return true;
 }
 
@@ -140,16 +153,16 @@ export default function Home() {
       const data = await response.json();
       console.log(`data.success: ${data.success}. Votes saved: ${JSON.stringify(votes)}. Voted by: ${currentAccount}`);
       fetchVotingData();
-      Toastify({text: 'Vote Success!', duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "green"}}).showToast();
+      showToast("Vote Success!", 2000, "green");
     } catch (error) {
       console.error("There was an error processing the vote: ", error);
-      Toastify({text: 'Vote Failed.', duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast("Vote Failed.", 2000, "red");
     }
   };
 
 
   // ==========================
-  // WEB3 FUNCTIONS
+  // Web3 FUNCTIONS
   // ==========================
 
   // Helper function to get MetaMask Object.
@@ -159,7 +172,7 @@ export default function Home() {
     if (!ethereum) {
       const message = 'MetaMask not detected. Please install MetaMask to login with Web3.'
       console.log(message);
-      Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast(message, 2000, "red");
       return null;
     }
     return ethereum;
@@ -195,7 +208,7 @@ export default function Home() {
       if (currentAccount) {
         const message = `Account '${currentAccount}' already connected.  To change accounts, manually disconnect the current account from this dApp inside MetaMask's 'connected sites' option.`
         console.log(message);
-        Toastify({text: message, duration: 5000, close: true, gravity: 'top', position: 'right', style: {background: "blue"}}).showToast();
+        showToast(message, 5000, "blue");
         return;
       } else {
         // Prompts user to connect their account to dApp, if they do it returns array of their accounts.
@@ -205,12 +218,11 @@ export default function Home() {
         setCurrentAccount(account);
         const message = `Account set to: '${account}'`
         console.log(message);
-        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "green"}}).showToast();
+        showToast(message, 2000, "green");
       }
-
 		} catch (error) {
 			console.log(error);
-      Toastify({text: error, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+      showToast(error, 2000, "red");
 		}
 	};
 
@@ -222,11 +234,11 @@ export default function Home() {
         setVoteTokensHeld(0);
         const message = `Disconnected '${currentAccount}'`
         console.log(message);
-        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+        showToast(message, 2000, "red");
       } else {
         const message = "No account to disconnect."
         console.log(message);
-        Toastify({text: message, duration: 2000, close: true, gravity: 'top', position: 'right', style: {background: "red"}}).showToast();
+        showToast(message, 2000, "red");
       }
 		} catch (error) {
 			console.log(error);
@@ -259,56 +271,83 @@ export default function Home() {
   }
   
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <div className="space-y-4 font-mono text-center">
-        <h1 className="text-2xl">Cast Your (Quadratic) Votes</h1>
-        <h2>Voting with Wallet: {currentAccount}</h2>
-        {Object.entries(votes).map(([candidate, voteCount], idx) => (
-          <div key={idx}>
-            <label>{`Candidate ${(idx+1)} `}</label>
-            <input 
-              type="number"
-              step="1"
-              min="0"
-              max="100"
-              value={voteCount}
-              onChange={event => handleVoteChange(candidate, parseInt(event.target.value))}
-              className="p-2 border rounded mt-2"
-            />
-            <span className="ml-4">{`VTKN Required: ${voteTokensRequired[candidate]}`}</span>
+    <main className="min-h-screen bg-gray-950 px-4 text-white">
+      <div className="grid font-mono grid-cols-3 gap-10 w-full h-screen">
+  
+        {/* Recent Voters Section */}
+        <div className="flex flex-col items-center justify-center h-full border-2">
+          <div className="space-y-4">
+            <h1 className="text-2xl text-center">Recent Voters</h1>
+            <ul className="space-y-4">
+              {votingData.map((entry, idx) => (
+                <li key={idx} className="p-4 rounded bg-blue-900">
+                  <ul className="pl-4 mt-1 space-y-1">
+                    Account: {truncateAddress(entry.account)}
+                    {entry.votesArray.map((vote, i) => (
+                      <li key={i}>
+                        {`Candidate ${i+1}: ${vote} votes`}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
-        <h2>Total VTKN Required: {totalVoteTokensRequired}</h2>
-        <h2>VTKN Balance: {voteTokensHeld}</h2>
-        <div><button onClick={submitBallot} className="p-2 mt-2 bg-blue-500 text-white rounded">Submit Ballot</button></div>
-        <div>
-          <button onClick={connectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Connect Wallet</button>
-          <button onClick={disconnectWallet} className="p-2 mt-2 bg-blue-500 text-white rounded">Disconnect</button>
         </div>
-        <div className="mt-4">
-          <h2>Past Voters:</h2>
-          <ul>
-            {votingData.map((entry, idx) => (
-              <li key={idx}>
-                {`Wallet: '${entry.account}' Votes: ${entry.votesArray.map((vote, i) => `Candidate ${i+1}: ${vote} votes`).join(', ')}`}
-              </li>
+  
+        {/* Ballot and Current Standings*/}
+        <div className="flex items-center justify-center h-full border-2">
+          <div className="flex flex-col items-center space-y-4">
+            
+            {/* Ballot */}
+            <h1 className="text-2xl text-center mb-8">Cast Your (Quadratic) Votes</h1>
+            {Object.entries(votes).map(([candidate, voteCount], idx) => (
+              <div key={idx}>
+                <label>{`Candidate ${(idx+1)} `}</label>
+                <input 
+                  type="number"
+                  step="1"
+                  min="0"
+                  max="100"
+                  value={voteCount}
+                  onChange={event => handleVoteChange(candidate, parseInt(event.target.value))}
+                  className="p-2 border rounded mt-2 bg-black"
+                />
+                <span className="ml-4">{`VTKN Required: ${voteTokensRequired[candidate]}`}</span>
+              </div>
             ))}
-          </ul>
+            <h2>Total VTKN Required: {totalVoteTokensRequired}</h2>
+            <h2>VTKN Balance: {voteTokensHeld}</h2>
+            <div><button onClick={submitBallot} className="p-2 mb-16 bg-purple-900">Submit Ballot</button></div>
+    
+            {/* Current Standings */}
+            <div className="mt-4 text-center rounded p-2 bg-blue-900">
+              <strong className="text-lg">Current Standings</strong>
+              <ul>
+                {Object.entries(voteSums).map(([candidate, votes]) => {
+                  const formattedCandidate = candidate.replace(/(\d+)/g, ' $1');
+                  return (
+                    <li key={candidate}>
+                      {`${formattedCandidate.charAt(0).toUpperCase() + formattedCandidate.slice(1)}: ${votes} votes`}
+                    </li>
+                  );
+                })}
+              </ul>
+              <p>Number of Unique Voters: {votingData.length}</p>
+            </div>
+            
+          </div>
         </div>
-        <div className="mt-4">
-          <h2>Current Standings:</h2>
-          <ul>
-          {Object.entries(voteSums).map(([candidate, votes]) => {
-            const formattedCandidate = candidate.replace(/(\d+)/g, ' $1');
-            return (
-              <li key={candidate}>
-                {`${formattedCandidate.charAt(0).toUpperCase() + formattedCandidate.slice(1)}: ${votes} votes`}
-              </li>
-            );
-          })}
-          </ul>
-          <p>Number of Unique Voters: {votingData.length}</p>
+  
+        {/* Connect and Disconnect Buttons */}
+        <div className="flex flex-col items-end justify-start h-full">
+          <div className="flex space-x-4 mt-4">
+            <button onClick={connectWallet} className="p-2 bg-green-500">Connect Wallet</button>
+            <button onClick={disconnectWallet} className="p-2 bg-red-500">Disconnect</button>
+          </div>
+          <div className="flex space-x-4 mt-2">{truncateAddress(currentAccount)}</div>
         </div>
+        
       </div>
     </main>
   );

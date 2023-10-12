@@ -1,26 +1,5 @@
-## Finishing Up
-- UI Concerns
-    - Move everything visually to how you want
-        - Connect Wallet & Disconnect button in top right
-        - Past Voters in a nice box format on left or right.
-        - Vote Summary in a box somewhere nice.
-    - Coloring/Background/Aesthetics
-    - Break everything into component files
-
-- Detail the project in the README.
-
-
-Right now, everything is in one big div I think, just centered and top to bottom.
-
-
-
-## Questions
-- Will local database work on deployment to vercel? (Or will I have to use atlas cloud one, is the same but just with a different string?)
-- `vercel` deploys on vercel, follow logical prompts.
-- Then just link github repo to vercel project on vercel website. It will now auto deploy on any commits.
-
-
-
+## Finishing up
+- README writeup
 
 ## General Process
 - I ran `npm init -y` to install basic package.json.
@@ -59,71 +38,16 @@ Right now, everything is in one big div I think, just centered and top to bottom
 - Hardhat docs: https://hardhat.org/docs
 - Solidity docs: https://docs.soliditylang.org/en/v0.8.21/
 - Ethers 6 docs: https://docs.ethers.org/v6/
-
+- Vitalik on 'Quadratic' Rank Systems - https://vitalik.ca/general/2019/12/07/quadratic.html
 
 
 ## Misc notes
 
-What is 'fair'?
-What illucidates the truth?
-What kind of human psychology is at play when distributing their vote tokens?
-Humans have a bias for certain numbers.
-
-=> voting basic solidity example: https://docs.soliditylang.org/en/latest/solidity-by-example.html
-
-1. Tokens?
-2. Multiple Users?
-3. Database connection? Mongo/SQL
-4. Express?
-5. Quadratic voting formula
-
-https://quadraticvote.co/
-https://github.com/anish-agnihotri/quadratic-voting
-
-https://qv.geek.sg/
-
-Quadratic voting: 
-https://vitalik.ca/general/2019/12/07/quadratic.html
+What is 'fair'? Why is n*(n+1)/2 'the most fair?' is it?
+What kind of human psychology is at play when distributing their vote tokens? Humans have a bias for certain numbers.
 
 ITS NOT N^2, ITS N^2/2. VITALIK HAS IT RIGHT. SHOW THE GRAPHS!
 Each votes `price` changes. You pay one for 1st vote, two credits for 2nd vote, (Totaling 3, and so on.)
 If everyone is given 100 credits, does not mean that each will get the same number of votes.
 Because each vote costs a different amount, some may choose to spread out votes more, giving more total votes.
 Or some may choose to stack votes heavily on one candidate, which will consume more vote credits more quickly.
-
-https://vitalik.ca/general/2019/10/24/gitcoin.html
-https://vitalik.ca/general/2020/01/28/round4.html
-
-
-
-
-atlas:
-
-adminUser, NMinaNidGa4rXe4S
-
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://adminUser:<password>@cluster0.wfzut53.mongodb.net/?retryWrites=true&w=majority";
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-run().catch(console.dir);
