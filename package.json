@@ -1,6 +1,6 @@
 {
-  "name": "merntest",
-  "version": "0.1.0",
+  "name": "quadratic_voting_dapp",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
