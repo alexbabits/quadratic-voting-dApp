@@ -28,9 +28,9 @@ Note 1: Because quadratic voting mechanism makes the vote credit price non-linea
 
 Note 2: Most articles and references believe the total cost should be exactly `n^2`. However, this yields the `nth` vote costing `2n-1` credits. To me it makes more sense to have the `nth` vote cost `n` credits. Both incremental cost increases are linear, and at the end of the day it is a fairly arbitrary argument reasoning about the "shoulds" for the steepness of the slope of two different lines. One noticable detail is that if there are 0 votes, the latter method costs -1 vote credit, which causes a fairly significant issue since mutli-candidate ballots will often get 0 votes on some candidates, with the technical cost of that supposing to be -1.
 
-(Total Cost) ==> (Incremental cost for casting the last/most recent vote)
-(1, 3, 6, 10, 15, 21, 28) ==> (1, 2, 3, 4, 5, 6, 7) ==> `nth vote costs n credits` ==> `total cost is (n^2+n)/2`
-(1, 4, 9, 16, 25, 36, 49) ==> (1, 3, 5, 7, 9, 11, 13) ==> `nth vote costs 2n-1 credits` ==> `total cost is n^2`
+- (Total Cost) ==> (Incremental cost for casting the last/most recent vote)
+- (1, 3, 6, 10, 15, 21, 28) ==> (1, 2, 3, 4, 5, 6, 7) ==> `nth vote costs n credits` ==> `total cost is (n^2+n)/2`
+- (1, 4, 9, 16, 25, 36, 49) ==> (1, 3, 5, 7, 9, 11, 13) ==> `nth vote costs 2n-1 credits` ==> `total cost is n^2`
 
 
 Food For Thought: 
