@@ -79,6 +79,7 @@ Food For Thought:
 - Implement a DAO contract which would handle the on chain execution of the actual result of the voting.
 - Break up page.js into components (not really an improvement imo for this project).
 - Faster load time, bundle state updates
+- deploy on vercel and use MongoDB Atlast instead of local MongoDB.
 
 ## References
 - Vitalik on 'Quadratic' Rank Systems - https://vitalik.ca/general/2019/12/07/quadratic.html
